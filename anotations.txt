@@ -1,0 +1,14 @@
+./manage.py showmigrations <app_django>
+
+
+python manage.py migrate <app> zero - EXECUTA ROLLBACK DE TODAS MIGRATIONS
+
+# To UserProfile model from users
+"""
+    OBS: Utilizar para criação de chaves estrangeiras
+
+    from django.conf import settings
+    UserProfile = settings.AUTH_USER_MODEL
+    ...
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+"""

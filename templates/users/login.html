@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="container-sm form-signin">
+    <form action="{% url 'login' %}" method="POST" class="d-flex flex-column" style="max-width: 400px; margin: 0 auto;"
+        autocomplete="off">
+        {% csrf_token %}
+        <img class="align-self-center mb-2 mt-4" src="{% static 'img/to_do_list_icon.png' %}"
+            alt="Welcome to checklist App!" width="72" height="68">
+        <h1 class="h3 mb-3 fw-normal text-center">Entrar</h1>
+        <div class="form-floating col mb-2 mt-2">
+            <input type="email" class="form-control" id="email" name="email" placeholder="blable@blabla.com">
+            <label for="email">Endereço de email</label>
+        </div>
+        <div class="form-floating col mb-2 mt-2">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Digite sua senha">
+            <label for="password">Senha</label>
+        </div>
+        <div class="checkbox col mb-4 mt-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Lembre-se de mim
+            </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary mb-5" type="submit">Entrar no meu dashboard</button>
+    </form>
+</main>
+{% endblock %}

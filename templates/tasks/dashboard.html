@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1 class="h1" style="text-align: center; padding: 30px; color: {{ user.profile_color }};">
+    Bem vindo {{ user.first_name }}!
+</h1>
+<div class="row row-cols-1 row-cols-3 g-4 d-flex">
+    {% if tasks %}
+    <!-- Single Best Receipe Area -->
+    {% for task in tasks %}
+    <div class="col" style="display: flex; width: 100%; flex-wrap: wrap; justify-content: space-between;">
+        <div class="card" style="width: 350px; margin-top: 1em; margin-bottom: 1em;">
+            {% if task.thumbnail %}
+            <img src="{{ task.thumbnail.url }}" alt="{{ task.title }}">
+            {% else %}
+            <img src="{% static 'img/to_do_list_icon.png' %}" alt="{{ task.title }}">
+            {% endif %}
+            <div class="card-body">
+                <a href="{% url 'my_task' task.id %}" style="text-decoration: none;" style="text-decoration: none;">
+                    <h5 style="color: {{ user.profile_color }};" class="card-title">{{ task.title }}</h5>
+                </a>
+                <p class="card-text text-secondary"
+                    style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px;">
+                    {{ task.description }}
+                </p>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Criado em {{ task.created_at }}</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12 col-sm-6 col-lg-4">
+        <p class="text-secondary">Você ainda não possuí nenhuma tarefa criada. 😔</p>
+        <p class="text-secondary">Abra o <strong style="color: {{ user.profile_color }}">menu a direita</strong> e crie um novo
+            <strong style="color: {{ user.profile_color }}">checklist</strong>!
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

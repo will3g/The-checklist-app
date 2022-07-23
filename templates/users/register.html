@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form class="row" action="{% url 'register' %}" method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col mb-2 mt-2">
+            <label for="name" class="form-label text-secondary">Digite seu <strong class="text-primary">Nome</strong></label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Nome">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mb-2 mt-2">
+            <label for="last_name" class="form-label text-secondary">Digite seu <strong class="text-primary">Sobrenome</strong></label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Sobrenome">
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col">
+            <label for="email" class="form-label text-secondary">Digite seu <strong class="text-primary">Email</strong></label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col">
+            <label for="password" class="form-label text-secondary">Digite sua <strong class="text-primary">Senha</strong></label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Senha">
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col">
+            <label for="confirm_password" class="form-label text-secondary">Confirme sua <strong
+                    class="text-primary">Senha</strong></label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirmação de senha">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mb-2 mt-2">
+            <label for="username" class="form-label text-secondary">Digite seu <strong class="text-primary">Username</strong></label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col">
+            <p class="form-label text-secondary">Escolha a imagem do seu <strong class="text-primary">Avatar</strong></p>
+            <div class="input-group">
+                <label class="btn btn-outline-primary" style="border-radius: .25rem;" for="upload_image">Upload</label>
+                <input style="display: none;" type="file" class="form-control" id="upload_image" name="upload_image">
+            </div>
+        </div>
+        <div class="col">
+            <label for="color_by_avatar" class="form-label text-secondary">Escolha a cor do seu <strong
+                    class="text-primary">Perfil</strong></label>
+            <input type="color" class="form-control form-control-color" id="color_by_avatar" name="color_by_avatar" value="#116dfa"
+                title="Escolha sua cor de avatar">
+        </div>
+    </div>
+    <div class="row mb-2 mt-5">
+        <div class="col d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Criar minha conta</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

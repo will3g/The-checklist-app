@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form class="row" action="{% url 'new_task' %}" method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col mb-2 mt-2">
+            <label for="task-title" class="form-label text-secondary">Digite o <strong class="text-primary">Título da
+                    tarefa</strong></label>
+            <input type="text" class="form-control" id="task-title" name="title" placeholder="Título da tarefa">
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <label class="form-label text-secondary" for="task-description">Digite a <strong class="text-primary">descrição
+            da tarefa</strong> (não é obrigatório)</label>
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Escreva a descrição aqui..." id="task-description"
+                name="description" style="height: 300px; resize: none;"></textarea>
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col">
+            <p class="form-label text-secondary">Escolha a imagem da sua <strong class="text-primary">Tarefa</strong></p>
+            <div class="input-group">
+                <label class="btn btn-outline-primary" style="border-radius: .25rem;" for="upload-image">Upload</label>
+                <input style="display: none;" type="file" class="form-control" id="upload-image" name="upload-image">
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <div class="col">
+            <label for="primary-color" class="form-label text-secondary">Escolha a <strong class="text-primary">cor
+                primária do seu Checklist</strong></label>
+            <input type="color" class="form-control form-control-color" id="primary-color" name="primary-color"
+                value="#116dfa" title="Escolha a cor primária do seu checklist">
+        </div>
+        <div class="col">
+            <label for="secondary-color" class="form-label text-secondary">Escolha a <strong class="text-primary">cor
+                secundária do seu Checklist</strong></label>
+            <input type="color" class="form-control form-control-color" id="secondary-color" name="secondary-color"
+                value="#ff7400" title="Escolha a cor secundária do seu checklist">
+        </div>
+    </div>
+    <div class="row mb-2 mt-2">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+            $(function () {
+                $("#sortable").sortable();
+                $("#sortable").disableSelection();
+            });
+
+            function addNewTask() {
+                let newLi = document.createElement('li');
+
+                newLi.setAttribute('class', 'd-flex list-item mt-3 mb-3');
+                newLi.setAttribute('data-id', '13');
+                newLi.setAttribute('data-item-sortable-id', '0');
+                newLi.setAttribute('draggable', 'true');
+                newLi.setAttribute('role', 'option');
+                newLi.setAttribute('aria-grabbed', 'false');
+
+                newLi.innerHTML = `<input type="text" class="form-control" id="task-title" name="subtasks" placeholder="Subtarefa... (clique e arraste se necessário)" style="margin-right: 20px;">
+                <button class="btn btn-danger" style="justify-content: center; align-items: center; display: flex; border-radius: 100%; width: 40px; height: 40px;" type="button" onclick="removeTask(this);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-trash" viewBox="3 0 10 15">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+                    </svg>
+                </button>`;
+                document.getElementById('sortable').appendChild(newLi);
+            }
+
+            function removeTask(btn) {
+                btn.parentNode.remove();
+            }
+        </script>
+        <div class="page-content page-container" id="page-content">
+            <div class="padding">
+                <div class="row">
+                    <div class="col">
+                        <div class="col" style="display: flex; justify-content: flex-end; float: right;">
+                            <button class="btn btn-primary" type="button" onclick="addNewTask();">Adicionar nova
+                                subtask</button>
+                        </div>
+                        <label class="form-label text-secondary">Defina as suas <strong
+                            class="text-primary">Subtarefas</strong>:</label>
+                        <ul class="list list-row card mt-2"
+                            style="border: transparent; list-style-type: none; padding-left: 0;" id="sortable"
+                            data-sortable-id="0" aria-dropeffect="move">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2 mt-5">
+        <div class="col d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Criar minha tarefa</button>
+        </div>
+    </div>
+</form>
+{% endblock %}
