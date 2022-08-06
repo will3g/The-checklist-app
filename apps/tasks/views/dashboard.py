@@ -1,7 +1,5 @@
-from asyncio import tasks
 from django.shortcuts import redirect, render
 
-from users.models import UserProfile
 from tasks.models import Task
 
 def dashboard(request):

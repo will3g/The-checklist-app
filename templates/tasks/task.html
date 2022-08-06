@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<form class="row" action="{% url 'edit_task' %}" method="POST" enctype="multipart/form-data" autocomplete="off">
+<form class="task-form row" action="{% url 'edit_task' %}" method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token %}
     <div class="row">
         <div class="row d-flex" style="margin-top: 1em; justify-content: space-between;">
@@ -22,7 +22,7 @@
                     <p class="text-secondary" style="font-style: italic;">Última edição em {{ task.created_at }}</p>
                 </div>
             </div>
-            <div class="row mb-2 mt-2">
+            <div class="row mb-2 mt-2" id="task-colors" style="display: none;">
                 <div class="col">
                     <label for="primary-color" class="form-label text-secondary">Escolha a <strong class="text-primary">cor
                         primária do seu Checklist</strong></label>
@@ -38,152 +38,12 @@
             </div>
         </div>
         <div class="row mb-2 mt-2">
-            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-            <script>
-                $(function () {
-                    $("#sortable").sortable();
-                    $("#sortable").disableSelection();
-                });
-
-                const removeButton = `<button class="btn btn-danger" 
-                style="justify-content: center; align-items: center; display: flex; border-radius: 100%; width: 40px; height: 40px;" 
-                type="button" onclick="removeTask(this);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
-                        class="bi bi-trash" viewBox="3 0 10 15">
-                        <path
-                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z">
-                        </path>
-                        <path fill-rule="evenodd"
-                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z">
-                        </path>
-                    </svg>
-                </button>`
-
-                const new_task_button = '<button class="btn btn-primary" type="button" onclick="addNewTask();">Adicionar nova subtask</button>'
-
-                const buttonToReplaceThumbnail = `<div class="row mb-2 mt-2">
-                    <div class="col">
-                        <div class="input-group">
-                            <label class="btn btn-outline-primary" style="border-radius: .25rem;" for="upload-image">Substituir thumbnail</label>
-                            <input style="display: none;" type="file" class="form-control" 
-                            id="upload-image" name="upload-image" onchange="previewThumbnail();">
-                        </div>
-                    </div>
-                </div>`;
-
-                function titleHtml(value) {
-                    return `<div class="row">
-                        <div class="col mb-2 mt-2">
-                            <input type="text" class="form-control" name="title" 
-                            placeholder="Título da tarefa" id="title" value="${value}">
-                        </div>
-                    </div>`;
-                }
-
-                function descriptionHtml(value) {
-                    return `<div class="row mb-2 mt-2">
-                        <div class="form-floating">
-                            <textarea class="form-control" placeholder="Escreva a descrição aqui..."
-                                name="description" style="height: 300px; resize: none;" 
-                                id="description">${value}</textarea>
-                        </div>
-                    </div>`;
-                }
-
-                function previewThumbnail() {
-                    let previewThumbnail = document.querySelector('#thumbnail');
-                    let file = document.querySelector('#upload-image').files[0];
-                    let reader  = new FileReader();
-                    reader.onloadend = function () {
-                        previewThumbnail.src = reader.result;
-                    }
-                    if (file) {
-                        reader.readAsDataURL(file);
-                    } else {
-                        previewThumbnail.src = "{% static 'img/to_do_list_icon.png' %}";
-                    }
-                }
-
-                function addNewTask() {
-                    let newLi = document.createElement('li');
-
-                    newLi.setAttribute('class', 'd-flex list-item mt-3 mb-3');
-                    newLi.setAttribute('data-id', '13');
-                    newLi.setAttribute('data-item-sortable-id', '0');
-                    newLi.setAttribute('draggable', 'true');
-                    newLi.setAttribute('role', 'option');
-                    newLi.setAttribute('aria-grabbed', 'false');
-
-                    newLi.innerHTML = `<input type="text" class="form-control" id="task-title" name="subtasks" placeholder="Subtarefa... (clique e arraste se necessário)">
-                    <span style="align-self: center; color: #0068ff;">⋮</span>
-                    ${removeButton}`;
-                    document.getElementById('sortable').appendChild(newLi);
-                }
-
-                function removeTask(btn) {
-                    btn.parentNode.remove();
-                }
-
-                function editTask() {
-                    let oldTitle = document.querySelector('#title');
-                    const titleText = oldTitle.innerText;
-                    let newTitle = document.createRange().createContextualFragment(
-                        titleHtml(titleText)
-                    );
-                    oldTitle.replaceWith(newTitle);
-
-                    let oldDescription = document.querySelector('#description');
-                    const descriptionText = oldDescription.innerText;
-                    let newDescription = document.createRange().createContextualFragment(
-                        descriptionHtml(descriptionText)
-                    );
-                    oldDescription.replaceWith(newDescription);
-
-                    let containerThumbnail = document.querySelector('#container-thumbnail');
-                    domButtonToReplaceThumbnail = document.createRange().createContextualFragment(
-                        buttonToReplaceThumbnail
-                    )
-                    containerThumbnail.appendChild(domButtonToReplaceThumbnail)
-
-                    editButton = document.getElementById('edit-button');
-                    editButton.innerText = 'Adicionar nova subtarefa';
-                    editButton.setAttribute('onclick', 'addNewTask();');
-
-                    arrayByInput = document.querySelectorAll('#task-title');
-                    for (const key in arrayByInput) {
-                        let item = arrayByInput[key];
-
-                        try {
-                            item.style.borderColor = '#ced4da'
-                            item.removeAttribute('disabled');
-                        } catch (error) {
-                            continue
-                        }
-                    }
-
-                    arrayByLi = document.querySelectorAll('.list-item')
-                    for (const key in arrayByLi) {
-                        let item = arrayByLi[key];
-                        parseStringToDom = document.createRange().createContextualFragment(removeButton);
-
-                        try { // Remove errors by console log
-                            item.appendChild(parseStringToDom);
-                        } catch (error) {
-                            continue
-                        }
-                    }
-
-                    submitContainer = document.querySelector('#submit-container');
-                    submitContainer.style.display = 'block';
-                }
-
-            </script>
             <div class="page-content page-container" id="page-content">
                 <div class="padding">
                     <div class="row">
                         <div class="col">
-                            <div class="col" style="display: flex; justify-content: flex-end; float: right;">
+                            <div class="buttons-container col" style="display: flex; justify-content: flex-end; float: right; width: 270px; justify-content: space-between;">
+                                <button id="delete-button" class="btn btn-danger" type="button" onclick="deleteTaskShowConfirmation();">Remover tarefa</button>
                                 <button id="edit-button" class="btn btn-primary" type="button" onclick="editTask();">Editar tarefa</button>
                             </div>
                             <label class="form-label text-secondary">Suas <strong
@@ -207,10 +67,189 @@
             </div>
         </div>
     </div>
-    <div id="submit-container" class="row mb-2 mt-2" style="display: none;">
+</form>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $(function () {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+    });
+
+    const removeButton = `<button class="btn btn-danger" 
+    style="justify-content: center; align-items: center; display: flex; border-radius: 100%; width: 40px; height: 40px;" 
+    type="button" onclick="removeTask(this);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+            class="bi bi-trash" viewBox="3 0 10 15">
+            <path
+                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z">
+            </path>
+            <path fill-rule="evenodd"
+                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z">
+            </path>
+        </svg>
+    </button>`
+
+    const new_task_button = '<button class="btn btn-primary" type="button" onclick="addNewTask();">Adicionar nova subtask</button>'
+
+    const buttonToReplaceThumbnail = `<div class="row mb-2 mt-2">
+        <div class="col">
+            <div class="input-group">
+                <label class="btn btn-outline-primary" style="border-radius: .25rem;" for="upload-image">Substituir thumbnail</label>
+                <input style="display: none;" type="file" class="form-control" 
+                id="upload-image" name="upload-image" onchange="previewThumbnail();">
+            </div>
+        </div>
+    </div>`;
+
+    const toastForDeleteTask = `<div class="delete-task-confirmation" style="left: 0; position: fixed; width: 100%; height: 100%; top: 0; background-color: rgba(22,22,22,0.5);">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="display: flex; justify-content: center; align-items: center; position: fixed; top: 0; width: 100%; height: 100%; background-color: transparent; box-shadow: none; border: none;">
+            <div class="toast-body" style="background-color: rgba(255,255,255,.85); border-radius: 5px;">
+                Você tem certeza que deseja excluir essa tarefa?
+                <div class="mt-2 pt-2 border-top">
+                    <button type="submit" class="btn btn-danger btn-sm">Excluir tarefa</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast" onclick="deleteTaskShowCancelConfirmation();">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    const submitForEdition = `<div id="submit-container" class="row mb-2 mt-2" style="display: none;">
         <div class="col d-grid gap-2">
             <button type="submit" class="btn btn-primary">Concluir edição</button>
         </div>
-    </div>
-</form>
+    </div>`;
+
+    function titleHtml(value) {
+        return `<div class="row">
+            <div class="col mb-2 mt-2">
+                <input type="text" class="form-control" name="title" 
+                placeholder="Título da tarefa" id="title" value="${value}">
+            </div>
+        </div>`;
+    }
+
+    function descriptionHtml(value) {
+        return `<div class="row mb-2 mt-2">
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Escreva a descrição aqui..."
+                    name="description" style="height: 300px; resize: none;" 
+                    id="description">${value}</textarea>
+            </div>
+        </div>`;
+    }
+
+    function deleteTaskShowConfirmation() {
+        let form = document.querySelector('.task-form');
+        form.innerHTML += toastForDeleteTask;
+        form.setAttribute('action', '/delete/task');
+    }
+
+    function deleteTaskShowCancelConfirmation() {
+        let deleteTaskShowCancelConfirmation = document.querySelector('.delete-task-confirmation').remove();
+
+        let form = document.querySelector('.task-form');
+        form.setAttribute('action', '/edit/task');
+    }
+
+    function previewThumbnail() {
+        let previewThumbnail = document.querySelector('#thumbnail');
+        let file = document.querySelector('#upload-image').files[0];
+        let reader  = new FileReader();
+        reader.onloadend = function () {
+            previewThumbnail.src = reader.result;
+        }
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            previewThumbnail.src = "{% static 'img/to_do_list_icon.png' %}";
+        }
+    }
+
+    function addNewTask() {
+        let newLi = document.createElement('li');
+
+        newLi.setAttribute('class', 'd-flex list-item mt-3 mb-3');
+        newLi.setAttribute('data-id', '13');
+        newLi.setAttribute('data-item-sortable-id', '0');
+        newLi.setAttribute('draggable', 'true');
+        newLi.setAttribute('role', 'option');
+        newLi.setAttribute('aria-grabbed', 'false');
+
+        newLi.innerHTML = `<input type="text" class="form-control" id="task-title" name="subtasks" placeholder="Subtarefa... (clique e arraste se necessário)">
+        <span style="align-self: center; color: #0068ff;">⋮</span>
+        ${removeButton}`;
+        document.getElementById('sortable').appendChild(newLi);
+    }
+
+    function removeTask(btn) {
+        btn.parentNode.remove();
+    }
+
+    function editTask() {
+        let taskColors = document.querySelector('#task-colors');
+        taskColors.setAttribute('style', 'display: flex');
+
+        let form = document.querySelector('.task-form');
+        form.innerHTML += submitForEdition;
+
+        let deleteButton = document.querySelector('#delete-button');
+        deleteButton.remove();
+
+        let buttonsContainer = document.querySelector('.buttons-container');
+        buttonsContainer.style.justifyContent = 'flex-end';
+
+        let oldTitle = document.querySelector('#title');
+        const titleText = oldTitle.innerText;
+        let newTitle = document.createRange().createContextualFragment(
+            titleHtml(titleText)
+        );
+        oldTitle.replaceWith(newTitle);
+
+        let oldDescription = document.querySelector('#description');
+        const descriptionText = oldDescription.innerText;
+        let newDescription = document.createRange().createContextualFragment(
+            descriptionHtml(descriptionText)
+        );
+        oldDescription.replaceWith(newDescription);
+
+        let containerThumbnail = document.querySelector('#container-thumbnail');
+        domButtonToReplaceThumbnail = document.createRange().createContextualFragment(
+            buttonToReplaceThumbnail
+        )
+        containerThumbnail.appendChild(domButtonToReplaceThumbnail)
+
+        editButton = document.getElementById('edit-button');
+        editButton.innerText = 'Adicionar nova subtarefa';
+        editButton.setAttribute('onclick', 'addNewTask();');
+
+        arrayByInput = document.querySelectorAll('#task-title');
+        for (const key in arrayByInput) {
+            let item = arrayByInput[key];
+
+            try {
+                item.style.borderColor = '#ced4da'
+                item.removeAttribute('disabled');
+            } catch (error) {
+                continue
+            }
+        }
+
+        arrayByLi = document.querySelectorAll('.list-item')
+        for (const key in arrayByLi) {
+            let item = arrayByLi[key];
+            parseStringToDom = document.createRange().createContextualFragment(removeButton);
+
+            try { // Remove errors by console log
+                item.appendChild(parseStringToDom);
+            } catch (error) {
+                continue
+            }
+        }
+
+        submitContainer = document.querySelector('#submit-container');
+        submitContainer.style.display = 'block';
+    }
+
+</script>
 {% endblock %}

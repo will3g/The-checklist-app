@@ -1,8 +1,25 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <form class="row" action="{% url 'new_task' %}" method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token %}
+    {% if errors %}
+    <div class="toast-container position-static" style="position: fixed !important; z-index: 1; right: 36px;">
+        {% for error in errors %}
+        <div class="toast notification-{{ forloop.counter }}" role="alert" aria-live="assertive" aria-atomic="true" style="display: block;">
+            <div class="toast-header">
+                <img src="{% static 'img/to_do_list_icon.png' %}" class="rounded me-2" alt="The checklist app" style="width: 16px;">
+                <strong class="me-auto">The checklist app notification</strong>
+                <button type="button" class="btn-close notification-{{ forloop.counter }}" data-bs-dismiss="toast" aria-label="Close" onclick="removeNotification('notification-{{ forloop.counter }}')"></button>
+            </div>
+            <div class="toast-body">
+                {{ error }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="row">
         <div class="col mb-2 mt-2">
             <label for="task-title" class="form-label text-secondary">Digite o <strong class="text-primary">Título da
@@ -23,7 +40,8 @@
             <p class="form-label text-secondary">Escolha a imagem da sua <strong class="text-primary">Tarefa</strong></p>
             <div class="input-group">
                 <label class="btn btn-outline-primary" style="border-radius: .25rem;" for="upload-image">Upload</label>
-                <input style="display: none;" type="file" class="form-control" id="upload-image" name="upload-image">
+                <input onchange="showFilePath();" style="display: none;" type="file" class="form-control" id="upload-image" name="upload-image">
+                <span class="form-control" id="path-file" style="margin-left: 20px; border-radius: .25rem; color: #4e4e4e;"></span>
             </div>
         </div>
     </div>
@@ -42,38 +60,6 @@
         </div>
     </div>
     <div class="row mb-2 mt-2">
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-            $(function () {
-                $("#sortable").sortable();
-                $("#sortable").disableSelection();
-            });
-
-            function addNewTask() {
-                let newLi = document.createElement('li');
-
-                newLi.setAttribute('class', 'd-flex list-item mt-3 mb-3');
-                newLi.setAttribute('data-id', '13');
-                newLi.setAttribute('data-item-sortable-id', '0');
-                newLi.setAttribute('draggable', 'true');
-                newLi.setAttribute('role', 'option');
-                newLi.setAttribute('aria-grabbed', 'false');
-
-                newLi.innerHTML = `<input type="text" class="form-control" id="task-title" name="subtasks" placeholder="Subtarefa... (clique e arraste se necessário)" style="margin-right: 20px;">
-                <button class="btn btn-danger" style="justify-content: center; align-items: center; display: flex; border-radius: 100%; width: 40px; height: 40px;" type="button" onclick="removeTask(this);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-trash" viewBox="3 0 10 15">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
-                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
-                    </svg>
-                </button>`;
-                document.getElementById('sortable').appendChild(newLi);
-            }
-
-            function removeTask(btn) {
-                btn.parentNode.remove();
-            }
-        </script>
         <div class="page-content page-container" id="page-content">
             <div class="padding">
                 <div class="row">
@@ -99,4 +85,53 @@
         </div>
     </div>
 </form>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    // "automatic" function
+    // (() => {
+    //
+    // })();
+
+    function removeNotification(target) {
+        let notification = document.querySelector(`.toast.${target}`);
+        notification.setAttribute('style', 'display: none !important;');
+    }
+
+    function showFilePath() {
+        let inputFile = document.querySelector('#upload-image');
+        let pathFile = document.querySelector('#path-file');
+        pathFile.innerText = inputFile.value;
+    }
+
+    // For click and drag
+    $(function () {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+    });
+
+    function addNewTask() {
+        let newLi = document.createElement('li');
+
+        newLi.setAttribute('class', 'd-flex list-item mt-3 mb-3');
+        newLi.setAttribute('data-id', '13');
+        newLi.setAttribute('data-item-sortable-id', '0');
+        newLi.setAttribute('draggable', 'true');
+        newLi.setAttribute('role', 'option');
+        newLi.setAttribute('aria-grabbed', 'false');
+
+        newLi.innerHTML = `<input type="text" class="form-control" id="task-title" name="subtasks" placeholder="Subtarefa... (clique e arraste se necessário)" style="margin-right: 20px;">
+        <button class="btn btn-danger" style="justify-content: center; align-items: center; display: flex; border-radius: 100%; width: 40px; height: 40px;" type="button" onclick="removeTask(this);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-trash" viewBox="3 0 10 15">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+            </svg>
+        </button>`;
+        document.getElementById('sortable').appendChild(newLi);
+    }
+
+    function removeTask(btn) {
+        btn.parentNode.remove();
+    }
+</script>
 {% endblock %}

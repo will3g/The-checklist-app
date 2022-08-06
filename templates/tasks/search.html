@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1 class="h1" style="text-align: center; padding: 30px; color: {{ user.profile_color }};">
-    Bem vindo {{ user.first_name }}!
+    O resultado da sua busca por: {{ search_params }}
 </h1>
 <div class="row row-cols-1 row-cols-3 g-4 d-flex">
     {% if tasks %}
@@ -33,10 +33,7 @@
     {% endfor %}
     {% else %}
     <div class="col-12 col-sm-6 col-lg-4">
-        <p class="text-secondary">Você ainda não possuí nenhuma tarefa criada. 😔</p>
-        <p class="text-secondary">Abra o <strong style="color: {{ user.profile_color }}">menu a direita</strong> e crie um novo
-            <strong style="color: {{ user.profile_color }}">checklist</strong>!
-        </p>
+        <p class="text-secondary">Nenhuma tarefa foi encontrada. 😔</p>
     </div>
     {% endif %}
 </div>
