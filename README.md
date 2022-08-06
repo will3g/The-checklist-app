@@ -30,6 +30,8 @@ The checklist app is in Django with MySQL, Javascript, Bootstrap and Jquery.
 
 ![alt Edit task](https://cdn.discordapp.com/attachments/953669666537095188/1005570699575971901/unknown.png)
 
+![alt Edit task](https://cdn.discordapp.com/attachments/953669666537095188/1005575994914119710/unknown.png)
+
 # Delete task
 
 ![alt Delete task](https://cdn.discordapp.com/attachments/953669666537095188/1005570677836890142/unknown.png)
